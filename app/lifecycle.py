@@ -29,9 +29,9 @@ class Lifecycle:
           1. ``self.shutting_down = True``
           2. Gọi lại handler cũ nếu có::
 
-                previous = self._previous.get(signum)
-                if callable(previous):
-                    previous(signum, frame)
+               previous = self._previous.get(signum)
+               if callable(previous):
+                   previous(signum, frame)
 
         Bước 2 quan trọng hơn vẻ ngoài của nó. Mỗi tín hiệu chỉ có **một**
         handler: đăng ký handler của mình là ghi đè handler của uvicorn — thứ
@@ -44,7 +44,10 @@ class Lifecycle:
         tham số này. Không làm gì nặng ở đây (không gọi mạng, không ghi file)
         — handler chạy xen giữa bytecode.
         """
-        raise NotImplementedError("TODO (CP4): cài đặt request_shutdown")
+        self.shutting_down = True
+        previous = self._previous.get(signum)
+        if callable(previous):
+            previous(signum, frame)
 
     def install(self) -> None:
         """Đăng ký handler cho SIGTERM và SIGINT, nhớ lại handler cũ.
@@ -56,7 +59,9 @@ class Lifecycle:
 
         SIGTERM: orchestrator yêu cầu tắt. SIGINT: bạn bấm Ctrl+C.
         """
-        raise NotImplementedError("TODO (CP4): cài đặt install")
+        for sig in (signal.SIGTERM, signal.SIGINT):
+            self._previous[sig] = signal.getsignal(sig)
+            signal.signal(sig, self.request_shutdown)
 
 
 # Một instance dùng chung cho cả app
