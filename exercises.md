@@ -95,7 +95,7 @@ Nếu lưu lịch sử trong Redis thì cả 3 container cùng đọc và ghi v�
 ---
 
 ### Câu 10 — Deploy thật (CP5)
-### URL: https://redis-production-cf80.up.railway.app
+### URL: https://day12-agent-vf6z.onrender.com
 Một lỗi tôi gặp khi deploy là ứng dụng không chạy đúng trên cloud vì server yêu cầu ứng dụng phải lắng nghe port được truyền qua biến môi trường `$PORT`. Ban đầu ứng dụng của tôi sử dụng port cố định nên health check không kết nối được.
 
 Tôi kiểm tra log deploy và thấy ứng dụng đã start nhưng health check bị timeout. Sau đó tôi kiểm tra lại cấu hình chạy server và nhận ra app chưa đọc biến `$PORT`. Tôi sửa code để lấy port từ biến môi trường, đồng thời đặt giá trị mặc định khi chạy local. Sau khi deploy lại, ứng dụng lắng nghe đúng port mà cloud cung cấp và health check hoạt động bình thường.
