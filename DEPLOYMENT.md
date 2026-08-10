@@ -18,8 +18,8 @@
 
 | Mục | Nội dung |
 |-----|----------|
-| Public URL | http://localhost:8000 (phương án dự phòng LOCAL_FALLBACK) |
-| Platform | Railway (phương án dự phòng: local docker compose) |
+| Public URL | https://day12-agent-vf6z.onrender.com |
+| Platform | Render |
 | Ngày deploy | 10/08/2026 |
 
 ## Biến Môi Trường Đã Set Trên Cloud
