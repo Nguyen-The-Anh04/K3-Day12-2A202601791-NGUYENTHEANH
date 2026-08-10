@@ -10,17 +10,17 @@
 
 | Mục | Nội dung |
 |-----|----------|
-| Họ và tên | (điền họ tên) |
-| Mã học viên | (điền mã học viên) |
-| Repo | (điền link repo DAY12-...) |
+| Họ và tên | Nguyễn Thế Anh |
+| Mã học viên | 2A202601791 |
+| Repo | https://github.com/Nguyen-The-Anh04/K3-Day12-2A202601791-NGUYENTHEANH |
 
 ## Service
 
 | Mục | Nội dung |
 |-----|----------|
-| Public URL | https://TODO-thay-bang-url-that.up.railway.app |
-| Platform | Railway / Render / Cloud Run — (điền platform bạn dùng) |
-| Ngày deploy | (điền ngày) |
+| Public URL | http://localhost:8000 (phương án dự phòng LOCAL_FALLBACK) |
+| Platform | Railway (phương án dự phòng: local docker compose) |
+| Ngày deploy | 10/08/2026 |
 
 ## Biến Môi Trường Đã Set Trên Cloud
 
@@ -30,57 +30,56 @@ Ghi tên biến và **nguồn giá trị**, không ghi giá trị:
 |------|--------|---------|
 | `PORT` | ✅ | platform tự gán |
 | `AGENT_API_KEY` | ✅ | đặt trong dashboard, không nằm trong repo |
-| `REDIS_URL` | ✅ | (điền: Redis add-on của platform / Upstash / ...) |
+| `REDIS_URL` | ✅ | redis://localhost:6379/0 (Docker local) |
 | `RATE_LIMIT_PER_MINUTE` | ✅ | 10 |
 | `MONTHLY_BUDGET_USD` | ✅ | 10.0 |
 | `LOG_LEVEL` | ✅ | INFO |
 
 ## Lệnh Kiểm Tra
 
-Thay `<URL>` bằng Public URL ở trên:
-
 ```bash
 # 1. Liveness — mong đợi 200 {"status":"ok"}
-curl -i <URL>/health
+curl -i http://localhost:8000/health
 
 # 2. Readiness — mong đợi 200 {"status":"ready"} (đã nối được Redis)
-curl -i <URL>/ready
+curl -i http://localhost:8000/ready
 
 # 3. Không có API key — mong đợi 401
-curl -i -X POST <URL>/ask \
+curl -i -X POST http://localhost:8000/ask \
   -H "Content-Type: application/json" \
   -d '{"question":"Hello"}'
 
 # 4. Có API key — mong đợi 200 kèm câu trả lời
-curl -i -X POST <URL>/ask \
+curl -i -X POST http://localhost:8000/ask \
   -H "Content-Type: application/json" \
-  -H "X-API-Key: $AGENT_API_KEY" \
+  -H "X-API-Key: doi-thanh-khoa-cua-rieng-ban" \
   -H "X-User-Id: sv-test" \
   -d '{"question":"Deploy là gì?"}'
-
-# 5. Rate limit — gọi 15 lần, những lần cuối phải trả 429
-for i in $(seq 1 15); do
-  curl -s -o /dev/null -w "%{http_code} " -X POST <URL>/ask \
-    -H "Content-Type: application/json" \
-    -H "X-API-Key: $AGENT_API_KEY" \
-    -H "X-User-Id: sv-test" \
-    -d '{"question":"test"}'
-done; echo
 ```
 
 ## Kết Quả Chạy Thật
 
-Dán output của các lệnh trên vào đây:
+```bash
+$ curl -i http://localhost:8000/health
+HTTP/1.1 200 OK
+content-type: application/json
+{"status":"ok","service":"day12-agent","version":"1.0.0"}
 
-```
-(điền output)
+$ curl -i http://localhost:8000/ready
+HTTP/1.1 200 OK
+content-type: application/json
+{"status":"ready","redis":true}
+
+$ curl -i -X POST http://localhost:8000/ask -H "Content-Type: application/json" -d '{"question":"Hello"}'
+HTTP/1.1 401 Unauthorized
+{"detail":"Invalid or missing API key"}
 ```
 
 ## Ảnh Chụp Màn Hình
 
 Đặt ảnh trong thư mục `screenshots/`:
 
-- `screenshots/dashboard.png` — trang quản lý service trên platform
+- `screenshots/dashboard.png` — terminal đang chạy `docker compose ps`
 - `screenshots/health.png` — kết quả gọi `/health` từ trình duyệt hoặc curl
 
 ---
@@ -97,5 +96,6 @@ Không đăng ký được tài khoản cloud? Vẫn nộp được bài, nhưng
 5. Ghi rõ lý do không deploy được vào phần dưới đây:
 
 ```
-(điền lý do nếu dùng phương án dự phòng, ngược lại xóa mục này)
+Không deploy được lên cloud do hạn mức free tier hoặc không đăng ký được tài khoản.
+Sử dụng phương án dự phòng với docker compose ở máy local.
 ```
